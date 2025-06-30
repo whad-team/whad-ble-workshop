@@ -498,6 +498,20 @@ wble-central|f2:ea:48:d1:48:c9> sub 22
 ```
 
 ---
+
+# Real-time monitoring
+
+- Use the `wireshark` command to start a live wireshark monitor:
+
+```bash
+wble-central|f2:ea:48:d1:48:c9> wireshark on
+```
+
+- Run a `profile` command and let the magic happens
+
+![bg right 90%](img/ble-wireshark-monitor.png)
+
+---
 <!-- _class: lead -->
 
 # Scripting with WHAD, a primer
@@ -605,6 +619,159 @@ $ wble-central -i hci0 -f ./example.whad
 2. Modify the previous script to load this JSON file using the interactive shell's `profile` command
 
 3. Verify that this new script runs much faster
+
+
+---
+
+<!-- _class: lead -->
+# Creating fake BLE devices
+
+---
+
+# `wble-periph` interactive mode
+
+- Provides a **set of commands** to:
+  - configure the device's advertising data
+  - create GATT services and characteristics
+  - modify characteristics's properties and values
+  - start and stop advertising
+
+- **Displays every client GATT operation** in real-time
+
+- Allows user to **modify characteristics's values** even when a GATT client is connected !
+
+---
+
+# Creating a fake peripheral by hand
+
+- Start `wble-periph` in interactive mode:
+
+```bash
+$ wble-periph -i hci0
+```
+
+- Use the `name` command to set the device name:
+
+```bash
+wble-periph> name "EmulatedDevice"
+```
+
+- Add a *Generic Access* service using the `service` command:
+
+```bash
+wble-periph> service add 1800
+```
+
+---
+
+# Creating an emulated peripheral by hand
+
+- Create a *Device Name* characteristic using the `char` command:
+
+```bash
+wble-periph|service(1800)> char add 2a00 read write notify
+```
+
+This characteristic is declared as <u>readable</u>, <u>writeable</u> and supports <u>notifications</u>.
+
+- Set the characteristic value with `write`:
+
+```bash
+wble-periph|service(1800)> write 2a00 "EmulatedDevice"
+```
+
+---
+
+# Check your emulated device's GATT profile
+
+- Use the `back` command to exit GATT service edition mode
+
+```bash
+wble-periph|service(1800)> back
+```
+
+- Use the `service` command to print the current GATT profile:
+
+```
+wble-periph> service
+
+Service 1800 (Generic Access) (handles from 1 to 4):
+└─ Characteristic 2a00 (Device Name)
+  └─ handle:2, value handle: 3, props: read,write,notify
+  └─ Descriptor 2902 (handle: 4)
+```
+
+---
+
+# Start advertising your emulated device
+
+- Use the `start` command to tell `wble-periph` to start advertising:
+
+```
+wble-periph> start
+```
+
+When the emulated device is advertising, no more changes can be made to the GATT profile configured previously.
+
+---
+
+# Connect to your emulated device
+
+- Using *nRF Connect*, connect to your emulated device and read its *Device Name* characteristic
+
+- `wble-periph` should display something like:
+
+```
+wble-periph> start
+New connection handle:24
+Reading characteristic 2a00 of service 1800
+ 00000000: 46 61 6B 65 44 65 76 69  63 65                    FakeDevice
+```
+
+---
+
+# Notifications
+
+- Subscribe to notifications for the *Device Name* characteristic
+
+- Use the `write` command to update the characteristic's value:
+
+```
+wble-periph[running]> write 2a00 "EmulatedDevice!"
+```
+
+- Notice the value has changed in *nRF Connect*
+
+---
+
+# Monitoring with Wireshark
+
+- Use the `wireshark` command to spawn Wireshark and monitor live GATT operations:
+
+```
+wble-periph[running]> wireshark on
+```
+
+---
+
+<!-- _class: lead -->
+# Scripting `wble-periph`
+
+---
+
+# Real-time monitoring
+
+---
+
+# Dumping traffic to a PCAP
+
+---
+
+# Use a saved GATT profile
+
+---
+
+# 
 
 ---
 
