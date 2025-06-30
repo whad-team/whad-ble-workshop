@@ -701,6 +701,285 @@ Use <code>wplay</code> and <code>wanalyze</code> to recover the Long Term Keys d
 <a style="font-size:0.5em" href="https://github.com/whad-team/whad-client/raw/refs/heads/main/whad/resources/pcaps/ble_pairing.pcap"> https://github.com/whad-team/whad-client/raw/refs/heads/main/whad/resources/pcaps/ble_pairing.pcap</a>
 </div>
 
+
+---
+
+## Python scripting
+
+---
+
+# Python API 101
+
+- WHAD provides an user-friendly Python API if you want to write your custom scripts
+
+- Very convenient way to automate things or implement complex behaviours !
+
+
+---
+# Devices & connectors
+
+- Start by initating the communication with your RF hardware:
+
+```python
+from whad.device import WhadDevice
+dev = WhadDevice.create("uart0")
+```
+
+- Then, you can use a dedicated **connector** (Scanner, Central, Peripheral, Sniffer...) that will expose you a specialized API:
+```python
+from whad.ble import Scanner
+scanner = Scanner(dev)
+```
+
+```python
+from whad.ble import Central
+central = Central(dev)
+```
+
+---
+# Closing a connector
+- You can properly close a connector using the `close` method:
+```python
+from whad.device import WhadDevice
+from whad.ble import Central
+
+try:
+  dev = WhadDevice.create("uart0")
+  central = Central(dev)
+  while True:
+    pass
+except KeyboardInterrupt:
+  central.close()
+  ```
+
+---
+# Discovering BLE devices
+- To discover surrounding BLE devices, instantiate a `Scanner` connector and use the `discover_devices` method:
+
+```python
+from whad.device import WhadDevice
+from whad.ble import Scanner
+
+scanner = Scanner(WhadDevice.create("hci0"))
+for device in scanner.discover_devices():
+  print(device.address, "->", device.name)
+
+```
+---
+# Connecting to a device
+- Connecting to a BLE device is as simple as instantiating a `Central` connector:
+
+```python
+from whad.device import WhadDevice
+from whad.ble import Central
+
+central = Central(WhadDevice.create("hci0"))
+```
+ - and use the `connect` method:
+ ```python
+ target = central.connect('11:22:33:44:55:66')
+ ```
+ ```python
+ target = central.connect('AA:BB:CC:DD:EE:FF', random=True)
+ ```
+
+---
+# Discovering a GATT profile
+
+- Once connected, you can discover services and characteristics using the `discover` method:
+```python
+  from whad.device import WhadDevice
+  from whad.ble import Central
+
+  central = Central(WhadDevice.create("hci0"))
+  target = central.connect('11:22:33:44:55:66')
+
+  # Discover and display the profile
+  target.discover()
+  print("[i] Discovered profile")
+  for service in target.services():
+      print('-- Service %s' % service.uuid)
+      for charac in target.characteristics():
+          print(' + Characteristic %s' % charac.uuid)
+```
+---
+# Find characteristic by UUID
+
+- You can easily access a specific characteristic from its UUID:
+```python
+from whad.ble.profile import UUID
+
+# [...] 
+
+# Retrieve the DeviceName characteristic object
+device_name = target.get_characteristic(UUID(0x1800), UUID(0x2A00))
+print(device_name.name)
+```
+
+---
+# Reading a characteristic value
+
+- Once you got your characteristic object, you can read the characteristic value using:
+```python
+# Reading the remote device name
+device_name = target.find_characteristic_by_uuid(UUID(0x2A00))
+print(device_name.value)
+```
+- It will trigger a *read request* for the corresponding characteristic (or several if values are longer than the MTU), even if you have no read access !
+
+
+---
+# Writing into a characteristic value
+
+- Writing to a characteristic’s value is quite as simple as reading it, we just set the characteristic’s value attribute and it starts a GATT write operation:
+```python
+# Writing the remote device name
+device_name = target.find_characteristic_by_uuid(UUID(0x2A00))
+device_name.value = b"pwnd"
+```
+
+- By default, it will trigger a *write request*. If you want to use *write command* (no response), use:
+```python
+# Writing the remote device name through a write command operation
+device_name = target.find_characteristic_by_uuid(UUID(0x2A00))
+device_name.write(b"pwnd", without_response=True)
+```
+
+---
+# Subscribing for notifications
+
+
+- To subscribe for notification, start by writing a callback:
+```python
+def notification_callback(charac, value: bytes, indication=False):
+  print(f"Characteristic {charac.name} value has been changed to {value.hex()}")
+```
+
+- Then, subscribe for notification using:
+
+```python
+device_name = target.find_characteristic_by_uuid(UUID(0x2A00))
+if device_name.can_notify():
+    if device_name.subscribe(
+        notification = True,
+        callback = notification_callback
+    ):
+      print("[i] Successfully susbcribed !")
+    else:
+      print("[i] An error occured.")
+```
+
+---
+# Subscribing for indication
+
+- To subscribe for indication, callback is very similar:
+```python
+def indication_callback(charac, value: bytes, indication=False):
+  # indication parameter equals True
+  print(f"Characteristic {charac.name} value has been changed to {value.hex()}")
+```
+
+- Then, subscribe for indication:
+
+```python
+device_name = target.find_characteristic_by_uuid(UUID(0x2A00))
+if device_name.can_indicate():
+    if device_name.subscribe(
+        indication=True,
+        callback = indication_callback
+    ):
+      print("[i] Successfully susbcribed !")
+    else:
+      print("[i] An error occured.")
+```
+
+---
+# Unsubscribing
+- Both for indication and notification, you can unsubscribe at any time using:
+```python
+# Unsubscribe from notifications or indications
+if device_name.unsubscribe():
+    print(f"Successfully unsubscribe from characteristic {device_name.uuid}")
+```
+---
+# Synchronous mode
+
+- Sometimes it may be convenient to disable the stack temporarily and handle the PDUs processing by yourself. It can be done by enabling the synchronous mode:
+```python
+    # Enable synchronous mode: we must process any incoming BLE packet.
+    central.enable_synchronous(True)
+```
+
+
+- Then, all the PDUs will not be forwarded to the stack but appended to a queue instead.
+
+---
+# Sending handcrafted PDUs
+
+- It's then possible to inject your own handcrafted PDUs:
+```python
+central.send_pdu(BTLE_DATA()/BTLE_CTRL()/LL_VERSION_IND(
+    version = 0x08,
+    company = 0x0101,
+    subversion = 0x0001
+))
+```
+- Then, wait for an answer using something like this:
+```python
+while central.is_connected():
+    pdu = central.wait_packet()
+    if pdu.haslayer(LL_VERSION_IND):
+        pdu[LL_VERSION_IND].show()
+        break
+```
+
+---
+# Monitoring in and out traffic
+
+- You can attach a callback to monitor all the incoming and outgoing traffic while using a connector:
+```python
+def processing_callback(pdu):
+  pdu.show()
+
+central.attach_callback(processing_callback)
+```
+
+---
+# Using PCAP monitor
+
+- You can also easily export the traffic into a PCAP file using the PCAP monitor:
+```python
+from whad.common.monitors import PCAPMonitor
+
+pcap_monitor = PCAPMonitor("out.pcap")
+
+# Attach & start the monitor
+pcap_monitor.attach(central)
+pcap_monitor.start()
+
+# [...]
+# Stop the monitor
+pcap_monitor.stop()
+```
+
+---
+# Using Wireshark monitor
+
+- Similarly, you can watch the live traffic through wireshark using another monitor:
+```python
+from whad.common.monitors import WiresharkMonitor
+
+ws_monitor = WiresharkMonitor()
+
+# Attach & start the monitor
+ws_monitor.attach(central)
+ws_monitor.start()
+
+# [...]
+# Stop the monitor
+ws_monitor.stop()
+```
+
 ---
 
 ## Q/A time
