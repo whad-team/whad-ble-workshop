@@ -1,0 +1,160 @@
+/* @theme qb */
+
+@import 'uncover';
+
+:root {
+    --dark_blue: #12214d;
+    /* --blue: #3862AB; */
+    --mid_blue: #065c9d;
+    --blue: #5ab7f5;
+    --light_blue: #eef6ff;
+    --dark_red: #cc0101; 
+    --red: #d61818;
+    --light_red: #ffeae4;
+    --dark_green: #409388; 
+    --green: #84C6A2;
+    --light_green: #e5f7ea;
+    --dark_grey: #67676d;
+    --grey: #aaaaaaaa;
+  }
+
+/** Fonts **/
+
+@font-face {
+    font-family: "ProximaNova";
+    src: url("fonts/ProximaNovaRegular.otf") format("opentype");
+}
+
+@font-face {
+    font-family: "ProximaNova";
+    src: url("fonts/ProximaNovaBold.otf") format("opentype");
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: "ProximaNova";
+    src: url("fonts/ProximaNovaItalic.otf") format("opentype");
+    font-style: italic;
+}
+
+@font-face {
+    font-family: "ProximaNova";
+    src: url("fonts/ProximaNovaBoldItalic.otf") format("opentype");
+    font-weight: bold;
+    font-style: italic;
+}
+
+
+ul {
+    margin:0px;
+    padding:0px;
+}
+ul li {
+    margin-left:100px;
+}
+/** Header **/
+
+header {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+}
+
+/****************************************
+  Section styling
+****************************************/
+
+section {
+    font-family: "ProximaNova";
+    letter-spacing: normal;
+}
+
+
+section[id="1"] {
+    background-image: url(img/network-faded.png);
+    background-size: cover;
+}
+
+section[id]:not([id="1"]) {
+    background-image: url(img/network-faded.png);
+    background-size: cover;
+}
+
+section header img:first-child {
+        position: absolute;
+        right: 65px;
+        scale:1.5;
+        content: url(img/qb-insa-laas.png);
+}
+
+
+
+/** Titles **/
+
+section h1 {
+    color: var(--dark_blue);
+}
+
+/* Titles for section after first slide */
+
+section[id]:not([id="1"]):not(.chapter) h1 {
+    position: absolute;
+    left: .5em;
+    top: .3em;
+    font-size: 1.5em;
+}
+
+section h2 {
+    color: var(--dark_blue);
+    font-size: 1.5em;
+}
+
+section h3 {
+    text-align: left;
+}
+
+p {
+    text-align: justify;
+}
+
+p img {
+    margin: auto;
+    display: block;
+}
+
+section ul, section ol {
+    display: inline;
+    min-width: 100%;
+}
+
+section pre {
+    font-size: 0.62em;
+}
+
+section a {
+    color: var(--mid_blue)
+}
+
+img[alt~="center"] {
+    display: block;
+    margin: 0 auto;
+  }
+
+.columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+:not(header) img:not(.emoji){
+    width: 100%;
+    padding-top: 50px;
+    max-width: 1200px;
+    max-height: 600px;
+    object-fit: contain;
+    height: auto;
+}
+
+.emoji {
+    display: inline-block;
+}
