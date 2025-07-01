@@ -128,19 +128,15 @@ section ul, section ol {
     min-width: 100%;
 }
 
-section pre {
-    font-size: 0.52em;
-}
 
 section a {
-    color: var(--mid_blue)
+    color: var(--mid_blue);
 }
 
 section.handson {
     background-image: url("img/handson-bg.png") !important;
-    background-size: contain;
-    background-position-y: 10px;
-    margin-right: 2em;
+    background-size: cover;
+    padding-right: 120px;
 }
 
 img[alt~="center"] {
@@ -167,11 +163,15 @@ img[alt~="center"] {
     display: inline-block;
 }
 
-pre {
-    width: 1000px !important;
+section pre {
+    width: 1100px;
+}
+
+section > pre > code {
+    width: 1100px;
     font-size: 20pt;
 }
 
-section code {
+code {
     font-size: 24pt;
 }

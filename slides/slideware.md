@@ -19,10 +19,17 @@ img[alt~="center"] {
 </style>
 
 # BLE Hacking 101 with WHAD
+##### Romain Cayre, Damien Cauquil
 
-##### Romain Cayre, Damien Cauquil 
+<div style="width: 49%; float: left;">
 
-![width:150 center](img/logo-pts.png)
+![width:150px](img/logo-pts.png)
+
+<div>
+<div style="width: 49%; float: left;">
+    <b>Pass The Salt - July 2, 2025</b>
+</div>
+
 
 ---
 
@@ -101,16 +108,17 @@ Offload complexity as much as possible:
 
 # Core concepts
 
-<img src="./img/systematization.png" width="50%">
-<ul>
-  <li> Generic tools to perform generic tasks/attacks
-    <ul style="font-size:0.6em">
-      <li>Tools work on multiple protocols</li>
-      <li>Some attacks are basically carried out almost the same way no matter the protocol: <br/><strong> → based on primitives infered from our systematization of wireless attacks</strong> </li>
-    <li>Common and standardized file format (PCAP) </li>
-    <li>Generic tools can be chained to create complex tools (inspired by UNIX philosophy)</li>
-  </ul>
-  </li>
+![width:800px](./img/systematization.png)
+
+---
+
+# Core concepts
+
+**Generic tools to perform generic tasks/attacks:**
+
+- Tools work on multiple protocols
+- Common and standardized file format (PCAP)
+- Generic tools that can be chained to create complex tools (inspired by UNIX philosophy)
 
 ---
 
@@ -244,17 +252,17 @@ Run the following command:
 - show capabilities and explain what the device is capable of
 
 ---
-
+<!-- _class: handson -->
 # WHAD interfaces
 
 List available interfaces:
 
-```
+```bash
 $ wup
 ```
 
 Enumerate the capabilities of a specific interface *"uart0"*:
-```
+```bash
 $ wup uart0
 ```
 
@@ -299,10 +307,10 @@ $ wup hci0
 - Advertisement and Scan PDUs are sent (at least) on **advertising channels** (**37**, **38**, **39**)
 
 ---
-
+<!-- _class: handson -->
 # Sniffing advertising PDUs
 
-- `wsniff` provides a dedicated mode when domain is set to **ble**:
+`wsniff` provides a dedicated mode when domain is set to **ble**:
 
 ```bash
 $ wsniff -i uart0 ble -a
@@ -315,10 +323,10 @@ The `-a` option enables *wsniff*'s BLE advertisement sniffing mode.
 **Sniffing is only supported by nRF52840 dongles.**
 
 ---
-
+<!-- _class: handson -->
 # Scanning for BLE devices
 
-- `wble-central` provides a scanning feature to discover surrounding devices:
+`wble-central` provides a scanning feature to discover surrounding devices:
 
 ```bash
 $ wble-central -i hci0 scan
@@ -329,33 +337,29 @@ $ wble-central -i hci0 scan
 [-064 dBm] [PUB] d0:d0:03:XX:XX:XX
 ```
 
-- Unlike sniffing, scanning loops on every advertising channel
+Unlike sniffing, scanning loops on every advertising channel
 
 ---
-
+<!-- _class: handson -->
 # Profiling BLE devices
-
-- Some devices expose a **GATT server** with a set of **services** and **characteristics**
 
 - *GATT enumeration procedure* discovers services and characteristics for a specific device but:
     - It may be <u>slow</u> depending on the target device
     - Performed **multiple times** when required by different tools
 
-- WHAD can **save a BLE device's GATT profile into a JSON file**
-
-- This file can then be used to **skip GATT enumeration**
+- WHAD can **save a BLE device's GATT profile into a <br>JSON file** for later use
 
 ---
-
+<!-- _class: handson -->
 # Profiling BLE devices
 
-- `wble-central` provides a specific `profile` command to connect to a specific device and save its *profile* to a JSON file:
+`wble-central` provides a specific `profile` command to connect to a specific device and save its *profile* to a JSON file:
 
 ```bash
 $ wble-central -i hci0 -b f2:ea:48:d1:48:c9 -r profile my_device.json
 ```
 
-`-r` option is mandatory when dealing with a device that uses a *random* BD address
+**`-r`** option is mandatory when dealing with a device that uses a *random* BD address
 
 ---
 
@@ -364,11 +368,11 @@ $ wble-central -i hci0 -b f2:ea:48:d1:48:c9 -r profile my_device.json
 ```json
 {
     "services": [
-        {"uuid": "1800", "type_uuid": "2800", "start_handle": 1, "end_handle": 7, "characteristics": [...]},
-        {"uuid": "1801", "type_uuid": "2800", "start_handle": 8, "end_handle": 8, "characteristics": []},
-        {"uuid": "6006", "type_uuid": "2800", "start_handle": 9, "end_handle": 14, "characteristics": [...]},
-        {"uuid": "7006", "type_uuid": "2800", "start_handle": 15, "end_handle": 20, "characteristics": [...]},
-        {"uuid": "180D", "type_uuid": "2800", "start_handle": 21, "end_handle": 65535, "characteristics": [...]},
+        {"uuid": "1800", "type_uuid": "2800", "start_handle": 1,
+            "end_handle": 7, "characteristics": [...]},
+        {"uuid": "1801", "type_uuid": "2800", "start_handle": 8,
+            "end_handle": 8, "characteristics": []},
+        ...
     ],
     "devinfo": {
         "adv_data": "10095...",
@@ -386,24 +390,28 @@ $ wble-central -i hci0 -b f2:ea:48:d1:48:c9 -r profile my_device.json
 # Interacting with BLE devices
 
 ---
+<!-- _class: handson -->
+# *wble-central* interactive mode
 
-# `wble-central` interactive mode
-
-- Provides a set of commands to:
+Provides a set of commands to:
   - scan for BLE devices
   - connect to a BLE device
   - enumerate its GATT profile
   - interact with its exposed characteristics
 
-- To use it, simply run:
+<br>
+
+To use it, simply run:
 
 ```bash
 $ wble-central -i hci0
 ```
 
 ---
-
+<!-- _class: handson -->
 # Scanning and connecting to a device
+
+Scan and connect to a device:
 
 ```bash
 wble-central> scan
@@ -415,7 +423,7 @@ wble-central> scan
 wble-central> connect f2:ea:48:d1:48:c9
 ```
 
-- Successful connection:
+Successful connection:
 
 ```
 Successfully connected to target f2:ea:48:d1:48:c9
@@ -423,10 +431,10 @@ wble-central|f2:ea:48:d1:48:c9>
 ```
 
 ---
-
+<!-- _class: handson -->
 # GATT enumeration
 
-- Once connected, use the `profile` command:
+Once connected, use the `profile` command:
 
 ```bash
 wble-central|f2:ea:48:d1:48:c9> profile
@@ -444,10 +452,10 @@ Service Generic Access (0x1800)
 GATT enumeration is **required to use UUIDs** in future operations.
 
 ---
-
+<!-- _class: handson -->
 # Reading a characteristic's value
 
-- Use the `read` command with the characteristic's UUID:
+Use the `read` command with the characteristic's UUID:
 
 ```bash
 wble-central|f2:ea:48:d1:48:c9> read 2a00
@@ -457,62 +465,65 @@ wble-central|f2:ea:48:d1:48:c9> read 2a00
 00000000: 5A 65 46 69 74 34 20 48  52 23 31 37 37 35 37     ZeFit4 HR#17757
 ```
 
-- Use the `read` command with the characteristic's value handle (3):
+Use the `read` command with the characteristic's value handle (3):
 
 ```bash
 wble-central|f2:ea:48:d1:48:c9>read 3
 ```
 
 ---
-
+<!-- _class: handson -->
 # Writing to a characteristic's value
 
-- Use the `write` command with the characteristic's UUID:
+Use the `write` command with the characteristic's UUID:
 
 ```bash
 wble-central|f2:ea:48:d1:48:c9> write 2A00 "Hello"
 ```
 
-- Use the `write` command with the characteristic's value handle:
+Use the `write` command with the characteristic's value handle:
 
 ```bash
 wble-central|f2:ea:48:d1:48:c9> write 3 "Hello"
 ```
 
-- Write data in hex ("ABCD"):
+Write data in hex ("ABCD"):
 
 ```bash
 wble-central|f2:ea:48:d1:48:c9> write 2A00 hex 41 42 43 44
 ```
 
 ---
-
+<!-- _class: handson -->
 # Writing to a characteristic's value
 
-- Try to write into a non-writeable characteristic's value:
+Try to write into a non-writeable characteristic's value:
 
 ```bash
 wble-central|f2:ea:48:d1:48:c9> >write 19 "Hello"
 [!] ATT error: write operation not allowed
 ```
 
-- Write without waiting a response with `write-cmd`:
+<br>
+
+Write without waiting a response with `write-cmd`:
 
 ```bash
 wble-central|f2:ea:48:d1:48:c9> writecmd 3 "Hacked"
 ```
 
 ---
-
+<!-- _class: handson -->
 # Subscribing to notifications
 
-- Use the `sub` command with the characteristic's UUID:
+Use the `sub` command with the characteristic's UUID:
 
 ```bash
 wble-central|f2:ea:48:d1:48:c9> sub 2a37
 ```
+<br>
 
-- or with the characteristic's handle:
+or with the characteristic's handle:
 
 ```bash
 wble-central|f2:ea:48:d1:48:c9> sub 22
@@ -520,17 +531,18 @@ wble-central|f2:ea:48:d1:48:c9> sub 22
 
 ---
 
+<!-- _class: handson -->
 # Real-time monitoring
 
-- Use the `wireshark` command to start a live wireshark monitor:
+Use the `wireshark` command to start a live wireshark monitor:
 
 ```bash
 wble-central|f2:ea:48:d1:48:c9> wireshark on
 ```
+<br>
 
-- Run a `profile` command and let the magic happens
+Run a `profile` command and let the magic happens
 
-![bg right 90%](img/ble-wireshark-monitor.png)
 
 ---
 
@@ -574,13 +586,14 @@ connect $TARGET
 
 # Manipulating the environment
 
-- To delete a variable: `unset VAR_NAME`
+To delete a variable: `unset VAR_NAME`
 
 ```bash
 unset TARGET
 ```
+<br>
 
-- To list current environment: `env`
+To list current environment: `env`
 
 ```bash
 wble-central> env
@@ -589,16 +602,16 @@ TARGET=f2:ea:48:d1:48:c9
 ```
 
 ---
-
 # Some useful scripting commands
 
-- To print some text or value: `echo TEXT`
+To print some text or value: `echo TEXT`
 
 ```bash
 echo "Connecting to " $TARGET
 ```
+<br>
 
-- Wait for the user to press a key: `wait MESSAGE`
+Wait for the user to press a key: `wait MESSAGE`
 
 ```bash
 wait "Press a key to disconnect from target"
@@ -606,9 +619,9 @@ wait "Press a key to disconnect from target"
 
 ---
 
-# Scripting with `wble-central`
+# Scripting with *wble-central*
 
-- Quick whad script to connect to a target (*example.whad*):
+Quick whad script to connect to a target (*example.whad*):
 
 ```sh
 set TARGET "f2:ea:48:d1:48:c9"
@@ -616,29 +629,33 @@ echo "Connecting to " $TARGET "..."
 connect $TARGET random
 ```
 
-- Run script with `wble-central`, using the `-f` option:
+Run script with `wble-central`, using the `-f` option:
 
 ```bash
 $ wble-central -i hci0 -f ./example.whad
 ```
 
 ---
+<!-- _class: handson -->
+# Automating wble-central
 
-# Hands-on
+**Write a script** that connects to your watch and:
 
-- Write a script that connects to your watch and:
   - discovers its services and characteristics
-  - read the *DeviceName* characteristic from its *Generic Access* service and prints it
-  - writes "0wn3d" into the same *DeviceName* characteristic value
+
+  - read the *DeviceName* characteristic from its <br>*Generic Access* service and prints it
+  
+  - writes "0wn3d" into the same <br>*DeviceName* characteristic value
+  
   - disconnects properly from the device
 
 ---
+<!-- _class: handson -->
+# Speeding things up !
 
-# Hands-on
+1. Export your watch GATT profile into a JSON file <br>using `wble-central`
 
-1. Export your watch GATT profile into a JSON file using `wble-central`
-
-2. Modify the previous script to load this JSON file using the interactive shell's `profile` command
+2. Modify the previous script to load this JSON file using<br>the interactive shell's `profile` command
 
 3. Verify that this new script runs much faster
 
@@ -650,7 +667,7 @@ $ wble-central -i hci0 -f ./example.whad
 
 ---
 
-# `wble-periph` interactive mode
+# *wble-periph* interactive mode
 
 - Provides a **set of commands** to:
   - configure the device's advertising data
@@ -663,56 +680,58 @@ $ wble-central -i hci0 -f ./example.whad
 - Allows user to **modify characteristics's values** even when a GATT client is connected !
 
 ---
-
+<!-- _class: handson -->
 # Creating a fake peripheral by hand
 
-- Start `wble-periph` in interactive mode:
+Start `wble-periph` in interactive mode:
 
 ```bash
 $ wble-periph -i hci0
 ```
 
-- Use the `name` command to set the device name:
+Use the `name` command to set the device name:
 
 ```bash
 wble-periph> name "EmulatedDevice"
 ```
 
-- Add a *Generic Access* service using the `service` command:
+Add a *Generic Access* service using the `service` command:
 
 ```bash
 wble-periph> service add 1800
 ```
 
 ---
-
+<!-- _class: handson -->
 # Creating an emulated peripheral by hand
 
-- Create a *Device Name* characteristic using the `char` command:
+Create a *Device Name* characteristic using the `char` command:
 
 ```bash
 wble-periph|service(1800)> char add 2a00 read write notify
 ```
 
-This characteristic is declared as <u>readable</u>, <u>writeable</u> and supports <u>notifications</u>.
+<small>This characteristic is declared as <u>readable</u>, <u>writeable</u> and supports <u>notifications</u>.</small>
 
-- Set the characteristic value with `write`:
+<br>
+
+Set the characteristic value with `write`:
 
 ```bash
 wble-periph|service(1800)> write 2a00 "EmulatedDevice"
 ```
 
 ---
-
+<!-- _class: handson -->
 # Check the device's GATT profile
 
-- Use the `back` command to exit GATT service edition mode
+Use the `back` command to return to main menu:
 
 ```bash
 wble-periph|service(1800)> back
 ```
 
-- Use the `service` command to print the current GATT profile:
+Use the `service` command to print the current GATT profile:
 
 ```
 wble-periph> service
@@ -724,24 +743,25 @@ Service 1800 (Generic Access) (handles from 1 to 4):
 ```
 
 ---
-
+<!-- _class: handson -->
 # Start advertising
 
-- Use the `start` command to tell `wble-periph` to start advertising:
+Use the `start` command to tell `wble-periph` to start advertising:
 
 ```
 wble-periph> start
 ```
+<br>
 
 When the emulated device is advertising, no more changes can be made to the GATT profile configured previously.
 
 ---
-
+<!-- _class: handson -->
 # Connect to your emulated device
 
-- Using *nRF Connect*, connect to your emulated device and read its *Device Name* characteristic
+Using *nRF Connect*, connect to your emulated device <br>and read its *Device Name* characteristic
 
-- `wble-periph` should display something like:
+`wble-periph` should display something like:
 
 ```
 wble-periph> start
@@ -751,31 +771,31 @@ Reading characteristic 2a00 of service 1800
 ```
 
 ---
-
+<!-- _class: handson -->
 # Notifications
 
-- Subscribe to notifications for the *Device Name* characteristic
+Subscribe to notifications for the <br>*Device Name* characteristic
 
-- Use the `write` command to update the characteristic's value:
+Use the `write` command to update the<br>characteristic's value:
 
 ```
 wble-periph[running]> write 2a00 "EmulatedDevice!"
 ```
 
-- Notice the value has changed in *nRF Connect*
+Notice the value has changed in *nRF Connect*
 
 ---
-
+<!-- _class: handson -->
 # Monitoring with Wireshark
 
-- Use the `wireshark` command to spawn Wireshark and monitor live GATT operations:
+Use the `wireshark` command to spawn Wireshark and monitor live GATT operations:
 
 ```
 wble-periph[running]> wireshark on
 ```
 
 ---
-
+<!-- _class: handson -->
 # Device cloning
 
 Use a saved GATT profile (JSON) with `wble-periph`:
@@ -789,15 +809,14 @@ It will automatically copy the emulated device profile including:
 ---
 
 <!-- _class: chapter -->
-# Scripting `wble-periph`
+# Scripting *wble-periph*
 
 ---
-
+<!-- _class: handson -->
 # Automate peripheral creation
 
-`emulated.whad`
-
-<pre><code>name "MyEmulatedDevice"
+```bash
+name "MyEmulatedDevice"
 echo "Configuring services and characteristics ..."
 service 18a00
 char add 2a00 read write notify
@@ -806,6 +825,7 @@ back
 echo "Starting emulated device ..."
 start
 wait "Press any key to exit."</code></pre>
+```
 
 To run this script:
 
@@ -828,14 +848,14 @@ To run this script:
 
 # BLE pairing overview
 
-<img src="img/pairing.png" width="65%" style="margin-top:50px;" />
+![width:730px](img/pairing.png)
 
 
 ---
 
 # Legacy pairing - passkey entry
 
-<img src="img/legacy_pairing.png" width="60%" style="margin-top:60px;" />
+![width:710px](img/legacy_pairing.png)
 
 
 ---
@@ -847,20 +867,18 @@ To run this script:
 - With the STK and LTK, all communications between the Central and the Peripheral can be decrypted.
 
 ---
-
+<!-- _class: handson -->
 # CrackLE attack with WHAD
 
+![width:200px](img/crackle.png)
 
-<img src="img/crackle.png" />
-<ul>
-<li> Sniffing the pairing process and the encrypted traffic:
-</li>
+Sniffing the pairing process and the encrypted traffic:
 
 ```
 $ wsniff -i uart0 ble -f | wdump pairing.pcap
 ```
-<li> Recovering the Short Term Key (STK):
-</li>
+
+Recovering the Short Term Key (STK):
 
 ```
 $ wplay pairing.pcap | wanalyze legacy_pairing_cracking
@@ -870,17 +888,14 @@ $ wplay pairing.pcap | wanalyze legacy_pairing_cracking
 ```
 
 ---
-
+<!-- _class: handson -->
 # CrackLE attack with WHAD
 
-
-<ul>
-
-<li> Recovering the distributed keys (LTK, IRK, CSRK):
-</li>
+Recovering the distributed keys (LTK, IRK, CSRK):
 
 ```
-$ wplay --flush pairing.pcap -d -k 11223344112233441122334411223344 | wanalyze
+$ wplay --flush pairing.pcap -d -k 11223344112233441122334411223344 \
+ | wanalyze
 [...]
 [✓] ltk_distribution → completed
   - ltk:  2867a99de17e3548cc17cf16ef96050e
@@ -897,14 +912,14 @@ $ wplay --flush pairing.pcap -d -k 11223344112233441122334411223344 | wanalyze
 ```
 
 ---
-
+<!-- _class: handson -->
 # wanalyze
 
-<img src="img/handson.png" style="height:80%; position:absolute;top:100px; left:50px;" />
-<div style="width:80%;position:absolute; top:100px; left:200px;">
-Use <code>wplay</code> and <code>wanalyze</code> to recover the Long Term Keys distributed in the following PCAP:   
-<br /><br />
-<a style="font-size:0.5em" href="https://github.com/whad-team/whad-client/raw/refs/heads/main/whad/resources/pcaps/ble_pairing.pcap"> https://github.com/whad-team/whad-client/raw/refs/heads/main/whad/resources/pcaps/ble_pairing.pcap</a>
+Use `wplay` and `wanalyze` to recover the Long<br>Term Keys distributed in the following PCAP file: 
+
+
+
+https://github.com/whad-team/whad-client/raw/refs/heads/main/whad/resources/pcaps/ble_pairing.pcap
 </div>
 
 
@@ -922,16 +937,21 @@ Use <code>wplay</code> and <code>wanalyze</code> to recover the Long Term Keys d
 
 
 ---
+<!-- _class: handson -->
 # Devices & connectors
 
-- Start by initating the communication with your RF hardware:
+Start by initating the communication with your RF hardware:
 
 ```python
 from whad.device import WhadDevice
 dev = WhadDevice.create("uart0")
 ```
+---
+<!-- _class: handson -->
+# Devices & connectors
 
-- Then, you can use a dedicated **connector** (Scanner, Central, Peripheral, Sniffer...) that will expose you a specialized API:
+Then, you can use a dedicated **connector** <br>(Scanner, Central, Peripheral, Sniffer...) that will expose <br>a *specialized API*:
+
 ```python
 from whad.ble import Scanner
 scanner = Scanner(dev)
@@ -942,9 +962,12 @@ from whad.ble import Central
 central = Central(dev)
 ```
 
+
 ---
+<!-- _class: handson -->
 # Closing a connector
-- You can properly close a connector using the `close` method:
+You can properly close a connector using the `close()` method:
+
 ```python
 from whad.device import WhadDevice
 from whad.ble import Central
@@ -959,8 +982,10 @@ except KeyboardInterrupt:
   ```
 
 ---
+<!-- _class: handson -->
 # Discovering BLE devices
-- To discover surrounding BLE devices, instantiate a `Scanner` connector and use the `discover_devices` method:
+
+To discover surrounding BLE devices, instantiate <br>a `Scanner` connector and use the `discover_devices()`<br>method:
 
 ```python
 from whad.device import WhadDevice
@@ -972,46 +997,48 @@ for device in scanner.discover_devices():
 
 ```
 ---
+<!-- _class: handson -->
 # Connecting to a device
-- Connecting to a BLE device is as simple as instantiating a `Central` connector:
+
+Connecting to a BLE device is as simple as instantiating <br>a `Central` connector and calling the `connect()` method:
 
 ```python
 from whad.device import WhadDevice
 from whad.ble import Central
 
 central = Central(WhadDevice.create("hci0"))
+target = central.connect('11:22:33:44:55:66', random=True)
 ```
- - and use the `connect` method:
- ```python
- target = central.connect('11:22:33:44:55:66')
- ```
- ```python
- target = central.connect('AA:BB:CC:DD:EE:FF', random=True)
- ```
+
 
 ---
+<!-- _class: handson -->
 # Discovering a GATT profile
 
-- Once connected, you can discover services and characteristics using the `discover` method:
+Once connected, you can discover services and characteristics using the `discover` method:
+
 ```python
-  from whad.device import WhadDevice
-  from whad.ble import Central
+from whad.device import WhadDevice
+from whad.ble import Central
 
-  central = Central(WhadDevice.create("hci0"))
-  target = central.connect('11:22:33:44:55:66')
+central = Central(WhadDevice.create("hci0"))
+target = central.connect('11:22:33:44:55:66')
 
-  # Discover and display the profile
-  target.discover()
-  print("[i] Discovered profile")
-  for service in target.services():
-      print('-- Service %s' % service.uuid)
-      for charac in target.characteristics():
-          print(' + Characteristic %s' % charac.uuid)
+# Discover and display the profile
+target.discover()
+print("[i] Discovered profile")
+for service in target.services():
+    print('-- Service %s' % service.uuid)
+    for charac in target.characteristics():
+        print(' + Characteristic %s' % charac.uuid)
 ```
+
 ---
+<!-- _class: handson -->
 # Find characteristic by UUID
 
-- You can easily access a specific characteristic from its UUID:
+You can easily access a specific characteristic from its UUID:
+
 ```python
 from whad.ble.profile import UUID
 
@@ -1023,77 +1050,80 @@ print(device_name.name)
 ```
 
 ---
+<!-- _class: handson -->
 # Reading a characteristic value
 
-- Once you got your characteristic object, you can read the characteristic value using:
+Once you got your characteristic object, you can read the characteristic value using:
 ```python
 # Reading the remote device name
 device_name = target.find_characteristic_by_uuid(UUID(0x2A00))
 print(device_name.value)
 ```
-- It will trigger a *read request* for the corresponding characteristic (or several if values are longer than the MTU), even if you have no read access !
+<br>
+
+It will trigger a *read request* for the corresponding characteristic (or several if values are longer than the MTU), even if you have no read access !
 
 
 ---
+<!-- _class: handson -->
 # Writing into a characteristic value
 
-- Writing to a characteristic’s value is quite as simple as reading it, we just set the characteristic’s value attribute and it starts a GATT write operation:
+Writing to a characteristic’s value is quite as simple as reading it, we just set the characteristic’s value attribute and it starts a GATT write operation:
 ```python
-# Writing the remote device name
 device_name = target.find_characteristic_by_uuid(UUID(0x2A00))
 device_name.value = b"pwnd"
 ```
 
-- By default, it will trigger a *write request*. If you want to use *write command* (no response), use:
+By default, it will trigger a *write request*. If you want to use *write command* (no response), use:
 ```python
-# Writing the remote device name through a write command operation
 device_name = target.find_characteristic_by_uuid(UUID(0x2A00))
 device_name.write(b"pwnd", without_response=True)
 ```
 
 ---
+<!-- _class: handson -->
 # Subscribing for notifications
 
 
-- To subscribe for notification, start by writing a callback:
+To subscribe for notification, start by writing a callback:
 ```python
 def notification_callback(charac, value: bytes, indication=False):
-  print(f"Characteristic {charac.name} value has been changed to {value.hex()}")
+  print((
+    f"Characteristic {charac.name} value has been "
+    f"changed to {value.hex()}"
+  ))
 ```
 
-- Then, subscribe for notification using:
+Then, subscribe for notification using:
 
 ```python
 device_name = target.find_characteristic_by_uuid(UUID(0x2A00))
 if device_name.can_notify():
-    if device_name.subscribe(
-        notification = True,
-        callback = notification_callback
-    ):
+    if device_name.subscribe(notification = True, 
+                             callback = notification_callback):
       print("[i] Successfully susbcribed !")
     else:
       print("[i] An error occured.")
 ```
 
 ---
+<!-- _class: handson -->
 # Subscribing for indication
 
-- To subscribe for indication, callback is very similar:
+To subscribe for indication, callback is very similar:
 ```python
 def indication_callback(charac, value: bytes, indication=False):
   # indication parameter equals True
   print(f"Characteristic {charac.name} value has been changed to {value.hex()}")
 ```
 
-- Then, subscribe for indication:
+Then, subscribe for indication:
 
 ```python
 device_name = target.find_characteristic_by_uuid(UUID(0x2A00))
 if device_name.can_indicate():
-    if device_name.subscribe(
-        indication=True,
-        callback = indication_callback
-    ):
+    if device_name.subscribe(indication=True,
+                             callback = indication_callback):
       print("[i] Successfully susbcribed !")
     else:
       print("[i] An error occured.")
@@ -1101,28 +1131,32 @@ if device_name.can_indicate():
 
 ---
 # Unsubscribing
-- Both for indication and notification, you can unsubscribe at any time using:
+
+Both for indication and notification, you can unsubscribe at any time using:
 ```python
 # Unsubscribe from notifications or indications
 if device_name.unsubscribe():
-    print(f"Successfully unsubscribe from characteristic {device_name.uuid}")
+    print((
+        "Successfully unsubscribe from characteristic "
+        f"{device_name.uuid}"))
 ```
 ---
 # Synchronous mode
 
-- Sometimes it may be convenient to disable the stack temporarily and handle the PDUs processing by yourself. It can be done by enabling the synchronous mode:
+Sometimes it may be convenient to disable the stack temporarily and handle the PDUs processing by yourself. It can be done by enabling the synchronous mode:
 ```python
-    # Enable synchronous mode: we must process any incoming BLE packet.
-    central.enable_synchronous(True)
+# Enable synchronous mode: we must process any incoming BLE packet.
+central.enable_synchronous(True)
 ```
 
 
-- Then, all the PDUs will not be forwarded to the stack but appended to a queue instead.
+Then, all the PDUs will not be forwarded to the stack but appended to a queue instead.
 
 ---
+<!-- _class: handson -->
 # Sending handcrafted PDUs
 
-- It's then possible to inject your own handcrafted PDUs:
+It's then possible to inject your own handcrafted PDUs:
 ```python
 central.send_pdu(BTLE_DATA()/BTLE_CTRL()/LL_VERSION_IND(
     version = 0x08,
@@ -1130,7 +1164,8 @@ central.send_pdu(BTLE_DATA()/BTLE_CTRL()/LL_VERSION_IND(
     subversion = 0x0001
 ))
 ```
-- Then, wait for an answer using something like this:
+
+Then, wait for an answer using something like this:
 ```python
 while central.is_connected():
     pdu = central.wait_packet()
@@ -1140,9 +1175,10 @@ while central.is_connected():
 ```
 
 ---
+<!-- _class: handson -->
 # Monitoring in and out traffic
 
-- You can attach a callback to monitor all the incoming and outgoing traffic while using a connector:
+You can attach a callback to monitor all the incoming and outgoing traffic while using a connector:
 ```python
 def processing_callback(pdu):
   pdu.show()
@@ -1151,9 +1187,10 @@ central.attach_callback(processing_callback)
 ```
 
 ---
+<!-- _class: handson -->
 # Using PCAP monitor
 
-- You can also easily export the traffic into a PCAP file using the PCAP monitor:
+You can also easily export the traffic into a PCAP file using the PCAP monitor:
 ```python
 from whad.common.monitors import PCAPMonitor
 
@@ -1169,9 +1206,10 @@ pcap_monitor.stop()
 ```
 
 ---
+<!-- _class: handson -->
 # Using Wireshark monitor
 
-- Similarly, you can watch the live traffic through wireshark using another monitor:
+Similarly, you can watch the live traffic through wireshark using another monitor:
 ```python
 from whad.common.monitors import WiresharkMonitor
 
