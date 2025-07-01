@@ -21,14 +21,9 @@ img[alt~="center"] {
 # BLE Hacking 101 with WHAD
 ##### Romain Cayre, Damien Cauquil
 
-<div style="width: 49%; float: left;">
-
 ![width:150px](img/logo-pts.png)
 
-<div>
-<div style="width: 49%; float: left;">
-    <b>Pass The Salt - July 2, 2025</b>
-</div>
+<center><b>Pass The Salt - July 2, 2025</b></center>
 
 
 ---
