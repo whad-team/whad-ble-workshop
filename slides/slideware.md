@@ -937,7 +937,6 @@ https://github.com/whad-team/whad-client/raw/refs/heads/main/whad/resources/pcap
 
 
 ---
-<!-- _class: handson -->
 # Devices & connectors
 
 Start by initating the communication with your RF hardware:
@@ -947,7 +946,6 @@ from whad.device import WhadDevice
 dev = WhadDevice.create("uart0")
 ```
 ---
-<!-- _class: handson -->
 # Devices & connectors
 
 Then, you can use a dedicated **connector** <br>(Scanner, Central, Peripheral, Sniffer...) that will expose <br>a *specialized API*:
@@ -964,7 +962,6 @@ central = Central(dev)
 
 
 ---
-<!-- _class: handson -->
 # Closing a connector
 You can properly close a connector using the `close()` method:
 
@@ -1034,7 +1031,6 @@ for service in target.services():
 ```
 
 ---
-<!-- _class: handson -->
 # Find characteristic by UUID
 
 You can easily access a specific characteristic from its UUID:
@@ -1050,7 +1046,6 @@ print(device_name.name)
 ```
 
 ---
-<!-- _class: handson -->
 # Reading a characteristic value
 
 Once you got your characteristic object, you can read the characteristic value using:
@@ -1065,7 +1060,6 @@ It will trigger a *read request* for the corresponding characteristic (or severa
 
 
 ---
-<!-- _class: handson -->
 # Writing into a characteristic value
 
 Writing to a characteristic’s value is quite as simple as reading it, we just set the characteristic’s value attribute and it starts a GATT write operation:
@@ -1081,7 +1075,6 @@ device_name.write(b"pwnd", without_response=True)
 ```
 
 ---
-<!-- _class: handson -->
 # Subscribing for notifications
 
 
@@ -1107,7 +1100,6 @@ if device_name.can_notify():
 ```
 
 ---
-<!-- _class: handson -->
 # Subscribing for indication
 
 To subscribe for indication, callback is very similar:
@@ -1141,6 +1133,7 @@ if device_name.unsubscribe():
         f"{device_name.uuid}"))
 ```
 ---
+<!-- _class: handson -->
 # Synchronous mode
 
 Sometimes it may be convenient to disable the stack temporarily and handle the PDUs processing by yourself. It can be done by enabling the synchronous mode:
@@ -1175,7 +1168,6 @@ while central.is_connected():
 ```
 
 ---
-<!-- _class: handson -->
 # Monitoring in and out traffic
 
 You can attach a callback to monitor all the incoming and outgoing traffic while using a connector:
@@ -1187,7 +1179,6 @@ central.attach_callback(processing_callback)
 ```
 
 ---
-<!-- _class: handson -->
 # Using PCAP monitor
 
 You can also easily export the traffic into a PCAP file using the PCAP monitor:
@@ -1206,7 +1197,6 @@ pcap_monitor.stop()
 ```
 
 ---
-<!-- _class: handson -->
 # Using Wireshark monitor
 
 Similarly, you can watch the live traffic through wireshark using another monitor:
@@ -1225,9 +1215,57 @@ ws_monitor.stop()
 ```
 
 ---
+<!-- _class: handson -->
+# Pick your ~~poison~~ target
 
-## Q/A time
+<br />
 
+![width:900px](img/difficulty.png)
+
+---
+# Discover the clients
+
+Scan for a compatible device:
+```
+$ ./lightbulb.py 
+Lightbulb:  74:da:ea:91:47:e3
+```
+
+Connect to the device and play with commands:
+```
+./lightbulb.py -a 74:da:ea:91:47:e3
+[i] Connected to  74:da:ea:91:47:e3 !
+[i] Available commands: 
+	- wireshark [start|stop]: start or stop wireshark
+	- on: turn bulb on
+	- off: turn bulb off
+  [...]
+[[ 74:da:ea:91:47:e3 ]] ~> on
+[[ 74:da:ea:91:47:e3 ]] ~> off
+```
+
+---
+<!-- _class: handson -->
+
+# Analyze a feature
+Choose some features to reproduce and analyze them by monitoring the traffic with wireshark:
+```
+[[ 74:da:ea:91:47:e3 ]] ~> wireshark start
+[[ 74:da:ea:91:47:e3 ]] ~> color 255 0 0
+```
+
+![width:650px](img/wireshark.png)
+
+---
+<!-- _class: handson -->
+
+# Hack the world !
+
+- Try to reproduce the features and control your target manually using `wble-central`
+
+- Implement your own client using a python script or a WHAD script
+
+- Emulate your device using a python script and connect it using your client !
 
 ---
 
