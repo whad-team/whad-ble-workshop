@@ -136,6 +136,13 @@ section a {
     color: var(--mid_blue)
 }
 
+section.handson {
+    background-image: url("img/handson-bg.png") !important;
+    background-size: contain;
+    background-position-y: 10px;
+    margin-right: 2em;
+}
+
 img[alt~="center"] {
     display: block;
     margin: 0 auto;
@@ -158,4 +165,13 @@ img[alt~="center"] {
 
 .emoji {
     display: inline-block;
+}
+
+pre {
+    width: 1000px !important;
+    font-size: 20pt;
+}
+
+section code {
+    font-size: 24pt;
 }

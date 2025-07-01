@@ -266,14 +266,21 @@ $ wup uart0
 
 ---
 
+<!-- _class: handson -->
 # whadup / wup
 
-<img src="img/handson.png" style="height:80%; position:absolute;top:100px; left:50px;" />
-<div style="width:80%;position:absolute; top:100px; left:200px;">
-Use <code>wup</code> / <code>whadup</code> to discover the capabilities and available commands of your nRF52840 dongle 
+Use `wup` to list all the available interfaces:
 
-<img src="img/nrf52.png" style="transform:scale(0.6);" />
-</div>
+```bash
+$ wup
+```
+
+Use `wup` to show more information about an interface:
+
+```bash
+$ wup hci0
+```
+
 
 ---
 
@@ -803,16 +810,6 @@ wait "Press any key to exit."</code></pre>
 To run this script:
 
 <pre><code>$ wble-periph -i hci0 -f emulated.whad</code></pre>
-
----
-
-# Combining cached GATT profile and scripting
-
-<pre><code>echo "Loading cached profile ..."
-profile device-profile.json
-echo "Starting emulated device ..."
-start
-wait "Press any key to exit."</code></pre>
 
 ---
 

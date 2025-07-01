@@ -1,0 +1,76 @@
+### Workshop objectives
+
+* Discover WHAD, a flexible wireless hacking Python framework and some of its key features
+* Learn how to easily scan, connect and interact with a BLE device using WHAD tools
+* Learn how to spoof any BLE device using WHAD
+* Learn how to create Python scripts using WHAD to automate BLE analysis and vulnerability exploitation 
+* Hack a BLE smartband for fun and profit !
+
+### Prerequisites
+
+* A laptop with Virtualbox or VMWare virtualization software installed (host OS does not really matter)
+  * We will provide a pre-configured VM a few days before the workshop
+  * Administrative rights may be required for the VM to access the host's USB interfaces and HCI adapters
+  * At least 2 free USB ports required on the host machine to plug some hardware devices, bring a USB hub if needed
+* A good knowledge of the Python programming language (Python 3.x)
+* A smartphone with Nordic Semiconductor's *nRF Connect* application installed (not mandatory but could be useful)
+* You can also bring any Bluetooth Low Energy device you think may be fun to fiddle with ;)
+
+### Workshop agenda
+
+* I. What is WHAD ?
+  * I.1. Introducing WHAD (purpose and global design)
+    * I.1.1. Supported protocols/modulations
+    * I.1.2. Combining simple tools to create complex tools
+    * I.1.3. Python API
+    * I.1.4. Examples of tools/research based on WHAD (quick demos)
+    * I.1.5. Pros and cons
+  * I.2. Core concepts
+    * I.2.1. Getting protocol processing out of firmware
+    * I.2.2. WHAD host/interface protocol
+    * I.2.3. Interfaces and connectors
+    * I.2.4. Tool chaining
+    * I.2.5. Scripting
+  * I.3. Installing WHAD
+    * I.3.1. Installing and running WHAD in a VM (we provide a VM image)
+    * I.3.2. Installing and running WHAD on your host computer (for the braves)
+    * I.3.3. First contact with WHAD
+
+* II. Discovering BLE devices
+  * II.1. Using wsniff to scan for BLE devices
+  * II.2. Using wble-central to discover devices
+  * II.3. Exporting a device profile to a file (for later use or reporting)
+  
+* III. Interacting with a BLE device (hands-on)
+  * III.1. Interactive mode using wble-central
+    * III.1.a. Services and characteristics discovery
+    * III.1.b. Reading and writing to characteristics
+    * III.1.c. Subscribing for notifications or indications
+    * III.1.e. Real-time monitoring with Wireshark
+  * III.2. Scripting with WHAD and wble-central
+    * III.2.a. Creating a script to avoid getting disconnected
+    * III.2.b. Running a script with wble-central
+    * III.2.c. Exporting and importing a BLE device's GATT profile for better speed
+
+* IV. Creating fake BLE devices (hands-on)
+  * IV.1. Interactive mode using wble-periph
+    * IV.1.a. Creating a device from scratch in interactive mode
+    * IV.1.b. Scripting wble-periph to quickly setup a device
+    * IV.1.c. Monitoring live with wireshark
+    * IV.1.d. Dumping traffic to PCAP file
+    * IV.1.e. Populating services and characteristics from exported GATT profile
+  * IV.2. Scripting with WHAD and wble-periph
+    * IV.2.a. Creating a script to advertise a specific peripheral
+    * IV.2.b. Combining saved GATT profile and scripting for efficiency
+
+* V. Python scripting (hands-on)
+  * V.1. WHAD Python API 101
+    * V.1.a. Connecting to a BLE device
+    * V.1.b. Reading and writing to characteristics
+    * V.1.c. Subscribing to notifications or indications
+    * V.1.d. Sending handcrafted PDUs
+    * V.1.e. Exporting traffic to PCAP
+  * V.2. Final challenge
+    * V.2.a. Discovering a vulnerable smart band
+    * V.2.b. Writing an exploit with Python and WHAD
+    * V.2.c. Hack all the smart bands !
