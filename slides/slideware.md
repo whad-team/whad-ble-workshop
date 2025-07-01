@@ -406,7 +406,7 @@ $ wble-central -i hci0 -b f2:ea:48:d1:48:c9 -r profile my_device.json
 - BLE devices can establish a **point to point** connection based on a **Central / Peripheral topology**
 - Connection relies on a **channel frequency algorithm** to prevent interferences with WiFi / other connections (hard to sniff !)
 
-![width:500px](img/connected.png)
+![width:670px](img/connected.png)
 
 ---
 <!-- _class: handson -->
