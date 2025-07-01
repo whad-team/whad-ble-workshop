@@ -81,9 +81,10 @@ section[id]:not([id="1"]) {
 }
 
 section header img:first-child {
-        position: absolute;
-        right: 65px;
-        scale:1.5;
+        position: fixed;
+        left: 45px;
+        bottom: 15px;
+        scale:1.2;
         content: url(img/qb-insa-laas.png);
 }
 
@@ -128,7 +129,7 @@ section ul, section ol {
 }
 
 section pre {
-    font-size: 0.62em;
+    font-size: 0.52em;
 }
 
 section a {

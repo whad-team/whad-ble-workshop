@@ -72,37 +72,30 @@ img[alt~="center"] {
 
 # A tool for everyone 
 
-<img src="./img/whad_for_everyone.png" width="90%" style="margin-top:150px">
+![](./img/whad_for_everyone.png)
 
 ---
 
 # Global overview
 
-<h4> WHAD includes:</h4> 
-<ul style="font-size:0.8em">
-  <li> An harmonised Host / RF Hardware communication protocol</li>
-  <li> A python library handling multiple wireless protocols</li>
-    <li> Multiple user-friendly CLI tools that can be chained together</li>
-  <li> A set of firmwares for various hardware devices</li>
+![width:800px](./img/whad-overview.png)
 
-</ul>
+- Harmonised Host / RF Hardware **communication protocol**
+- **Python library** supporting multiple wireless protocols
+- Multiple user-friendly **CLI tools** that can be combined
+- Set of firmwares for **various hardware devices**
 
-<img src="./img/whad-overview.png" width="90%">
 
 
 ---
 
 # Core concepts
-<img src="./img/simple_firmware.png" width="70%">
 
-<ul>
-  <li> Offload complexity as much as possible
-    <ul style="font-size:0.6em">
-      <li>Protocol stacks implemented on host side</li>
-      <li><strong>Hardware does hardware stuff:</strong> timing-critical tasks, RF</li>
-    </ul>
-  </li>
-</ul>
+![width:600px](img/simple_firmware.png)
+
+Offload complexity as much as possible:
+- Protocol stacks implemented on host side
+- **Hardware does hardware stuff:** timing-critical tasks, RF
 
 ---
 
@@ -119,22 +112,23 @@ img[alt~="center"] {
   </ul>
   </li>
 
+---
+
+# Compatible hardware
+
+- **Hardware is discoverable** and exposes its *capabilities*
+
+- Generic and custom tools can **tune attacks or tasks** to hardware
+
+- Anyone can develop a compatible firmware <br>**without bothering about tools**
 
 ---
 
-# Core concepts
+# Compatible hardware
 
-<img src="./img/compatible_hardware.webp" width="90%">
+![width:1000px](img/compatible_hardware.webp)
 
-<ul>
-  <li> Compatible hardware
-        <ul style="font-size:0.6em">
-      <li>Hardware is discoverable and exposes its capabilities </li>
-      <li>Generic and custom tools can tune attacks/tasks to hardware </li>
-      <li>Anyone can develop a compatible firmware <strong>without bothering about tools</strong> </li>
-    </ul>
-  </li>
-</ul>
+
 
 ---
 
@@ -152,21 +146,38 @@ img[alt~="center"] {
 
 # Connectors and interfaces
 
-![width:100% center](img/connectors_and_devices.png)
+![width:550px](img/connectors_and_devices.png)
 
 ---
 
 # Tool chaining
 
-![width:90% center](img/whad-toolchain.png)
+![width:900px center](img/whad-toolchain.png)
 
 
 ---
 
 # Python scripting
 
-<ul style="font-size:0.8em"><li>WHAD provides an user-friendly Python API to implement your own custom scripts</li></ul>
-<img src="img/scripting.png" />
+WHAD provides an user-friendly Python API to implement your own custom scripts:
+
+```python
+import sys
+from whad.ble import Central
+from whad.ble.profile import UUID
+from whad.device import WhadDevice
+
+# Create the Central connector & the WHAD device
+central = Central(WhadDevice.create("hci0"))
+device = central.connect('74:da:ea:91:47:e3', random=False)
+if device is not None:
+    device.discover()
+    device_name = device.get_characteristic(UUID(0x1800), UUID(0x2A00))
+    print("[i] Device name: ", device_name.value)
+    central.close()
+else:
+    print("Usage: ", sys.argv[0]+" <interface>")
+```
 
 ---
 
@@ -175,12 +186,11 @@ img[alt~="center"] {
 
 # Hardware requirements
 
-<ul style="font-size:0.8em">
-<li> Computer or VM running a <strong>Linux</strong> operating system</li>
-<li> nRF52 USB Dongle with <strong>ButteRFly</strong> installed</li>
-<li> USB Bluetooth Low Energy <strong>dongle</strong> or <strong>embedded Bluetooth adapter</strong></li>
-</ul>
-<img src="img/requirements.png" />
+- Computer or VM running a **Linux** operating system
+- nRF52 USB Dongle with **ButteRFly** installed
+- USB Bluetooth Low Energy **dongle** or **embedded Bluetooth adapter**
+
+![width:500px](img/requirements.png)
 
 ---
 
@@ -198,52 +208,56 @@ img[alt~="center"] {
 
 # Instaling WHAD locally
 
-- Installing whad-client is as simple as running:
-```
-$ mkdir whad-workshop && cd whad-workshop
+Installing whad-client is as simple as running:
+
+<pre>
+    <code>$ mkdir whad-workshop && cd whad-workshop
 $ python3 -m venv venv
 $ source venv/bin/activate
 (venv) $ pip install whad
-(venv) $ winstall --rules all
-```
+(venv) $ winstall --rules all</code>
+</pre>
+
+
 ---
 
 # Flashing ButteRFly firmware
-<br />
-<ul style="font-size:0.8em">
-<li>
-Set the dongle in <b>programming mode</b> by pressing the side button <i>RESET</i>:
-<img src="img/dongle_press_reset.svg" style="transform:scale(0.7)"/>
-</li>
-<li> Run the following command:
+
+Set the dongle in **programming mode** by pressing the side button *RESET*:
+![width:500px](img/dongle_press_reset.svg)
+
+Run the following command:
+
 <pre>
 <code> $ winstall --flash butterfly
 </code>
 </pre>
 
-</ul>
+---
+
+# WHAD interfaces
+
+`wup` / `whadup` is the easiest way to detect compatible interfaces on your system:
+
+- automatically detect compatible interfaces (USB and internal)
+- query any interface to determine its capabilities
+- show capabilities and explain what the device is capable of
 
 ---
 
 # WHAD interfaces
 
-<ul style="font-size:1em">
-<li> <code>wup</code> / <code>whadup</code> is the easiest way to detect compatible interfaces on your system !
-  
-<ul style="font-size:0.8em">
-<li>Automatically detect compatible interfaces (USB and internal)</li>
-<li>Query any interface to determine its capabilities</li>
-<li>Show capabilities and explain what the device is capable of</li></ul>
-</ul>
+List available interfaces:
 
-- List available interfaces:
 ```
 $ wup
 ```
-- Display the capabilities of a specific interface *"uart0"*:
+
+Enumerate the capabilities of a specific interface *"uart0"*:
 ```
 $ wup uart0
 ```
+
 ---
 
 # WHAD interfaces
@@ -263,7 +277,7 @@ Use <code>wup</code> / <code>whadup</code> to discover the capabilities and avai
 
 ---
 
-<!-- _class: lead -->
+<!-- _class: chapter -->
 
 ## Discovering BLE devices
 
@@ -360,7 +374,7 @@ $ wble-central -i hci0 -b f2:ea:48:d1:48:c9 -r profile my_device.json
 
 ---
 
-<!-- _class: lead -->
+<!-- _class: chapter -->
 
 # Interacting with BLE devices
 
@@ -512,7 +526,8 @@ wble-central|f2:ea:48:d1:48:c9> wireshark on
 ![bg right 90%](img/ble-wireshark-monitor.png)
 
 ---
-<!-- _class: lead -->
+
+<!-- _class: chapter -->
 
 # Scripting with WHAD, a primer
 
@@ -623,7 +638,7 @@ $ wble-central -i hci0 -f ./example.whad
 
 ---
 
-<!-- _class: lead -->
+<!-- _class: chapter -->
 # Creating fake BLE devices
 
 ---
@@ -754,7 +769,7 @@ wble-periph[running]> wireshark on
 
 ---
 
-<!-- _class: lead -->
+<!-- _class: chapter -->
 # Scripting `wble-periph`
 
 ---
@@ -775,7 +790,8 @@ wble-periph[running]> wireshark on
 
 ---
 
-## Breaking BLE legacy pairing
+<!-- _class: chapter -->
+# Breaking BLE legacy pairing
 
 ---
 
