@@ -208,7 +208,7 @@ if device is not None:
 
 ---
 
-# Instaling WHAD locally
+# Installing WHAD locally
 
 Installing whad-client is as simple as running:
 
@@ -342,7 +342,7 @@ $ wble-central -i hci0 scan
 [-064 dBm] [PUB] d0:d0:03:XX:XX:XX
 ```
 
-Unlike sniffing, scanning loops on every advertising channel
+Unlike sniffing, scanning loops on every advertising channel.
 
 ---
 # GATT services & characteristics
@@ -514,9 +514,9 @@ wble-central|f2:ea:48:d1:48:c9> write 2A00 hex 41 42 43 44
 
 ---
 <!-- _class: handson -->
-# Writing to a characteristic's value
+# Writing to a characteristic value
 
-Try to write into a non-writeable characteristic's value:
+Try to write into a non-writeable characteristic value:
 
 ```bash
 wble-central|f2:ea:48:d1:48:c9> >write 19 "Hello"
@@ -525,7 +525,7 @@ wble-central|f2:ea:48:d1:48:c9> >write 19 "Hello"
 
 <br>
 
-Write without waiting a response with `write-cmd`:
+Write without waiting a response with `writecmd`:
 
 ```bash
 wble-central|f2:ea:48:d1:48:c9> writecmd 3 "Hacked"
@@ -560,7 +560,7 @@ wble-central|f2:ea:48:d1:48:c9> wireshark on
 ```
 <br>
 
-Run a `profile` command and let the magic happens
+Run a `profile` command and see the magic happen :)
 
 
 ---
@@ -1142,10 +1142,7 @@ device_name.write(b"pwnd", without_response=True)
 To subscribe for notification, start by writing a callback:
 ```python
 def notification_callback(charac, value: bytes, indication=False):
-  print((
-    f"Characteristic {charac.name} value has been "
-    f"changed to {value.hex()}"
-  ))
+  print(f"Charac. {charac.name} value changed to {value.hex()}")
 ```
 
 Then, subscribe for notification using:
@@ -1167,7 +1164,7 @@ To subscribe for indication, callback is very similar:
 ```python
 def indication_callback(charac, value: bytes, indication=False):
   # indication parameter equals True
-  print(f"Characteristic {charac.name} value has been changed to {value.hex()}")
+  print(f"Charac. {charac.name} value changed to {value.hex()}")
 ```
 
 Then, subscribe for indication:
@@ -1189,9 +1186,7 @@ Both for indication and notification, you can unsubscribe at any time using:
 ```python
 # Unsubscribe from notifications or indications
 if device_name.unsubscribe():
-    print((
-        "Successfully unsubscribe from characteristic "
-        f"{device_name.uuid}"))
+    print(f"Successfully unsubscribe from charac. {device_name.uuid}")
 ```
 ---
 <!-- _class: handson -->
