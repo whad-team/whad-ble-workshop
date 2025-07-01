@@ -30,7 +30,7 @@ img[alt~="center"] {
 
 # Who are we ? 
 
-**Romain Cayre**, EURECOM
+**Romain Cayre**, LAAS-CNRS / INSA Toulouse
   - maintainer of *Mirage*, a popular BLE swiss-army tool
   - loves *cross-protocol attacks* (*Wazabee*)
 
@@ -46,7 +46,7 @@ img[alt~="center"] {
 
 - **What is WHAD ?**
 - **Discovering BLE devices**
-- **Interacting with a BLE device**
+- **Interacting with BLE devices**
 - **Creating fake BLE devices**
 - **Breaking BLE legacy pairing**
 - **Python scripting**
@@ -64,6 +64,7 @@ img[alt~="center"] {
   - emulate fake BLE devices
 - Teach simple Python scripting with WHAD
 - Let you experiment with the framework and tools
+ 
 ---
 
 <!-- _class: chapter -->
@@ -96,7 +97,7 @@ img[alt~="center"] {
 ![width:600px](img/simple_firmware.png)
 
 Offload complexity as much as possible:
-- Protocol stacks implemented on host side
+- Protocol stacks implemented on **host side**
 - **Hardware does hardware stuff:** timing-critical tasks, RF
 
 ---
@@ -111,9 +112,9 @@ Offload complexity as much as possible:
 
 **Generic tools to perform generic tasks/attacks:**
 
-- Tools work on multiple protocols
-- Common and standardized file format (PCAP)
-- Generic tools that can be chained to create complex tools (inspired by UNIX philosophy)
+- Tools work on **multiple protocols**
+- **Common** and **standardized file format** (PCAP)
+- Generic tools that can be **chained** to **create complex tools** (inspired by UNIX philosophy)
 
 ---
 
@@ -165,7 +166,6 @@ Offload complexity as much as possible:
 WHAD provides an user-friendly Python API to implement your own custom scripts:
 
 ```python
-import sys
 from whad.ble import Central
 from whad.ble.profile import UUID
 from whad.device import WhadDevice
@@ -178,8 +178,7 @@ if device is not None:
     device_name = device.get_characteristic(UUID(0x1800), UUID(0x2A00))
     print("[i] Device name: ", device_name.value)
     central.close()
-else:
-    print("Usage: ", sys.argv[0]+" <interface>")
+
 ```
 
 ---
@@ -200,7 +199,7 @@ else:
 # Resources
 
 - Online repository with examples and code templates:
-[https://github.com/whad-team/whad-workshop](https://github.com/whad-team/whad-workshop)
+[https://github.com/whad-team/whad-ble-workshop](https://github.com/whad-team/whad-ble-workshop)
 
 
 
@@ -295,9 +294,20 @@ $ wup hci0
 
 # BLE device advertisements
 
+<img width="60%" src="img/advertisements.png" />
+
 - Two types of PDU sent by BLE devices:
     - **Advertisement PDUs**: *ADV_IND*, *ADV_DIRECT_IND*, *ADV_NONCONN_IND*, etc...
     - **Scan-related PDUs** (active mode): *SCAN_REQ* and *SCAN_RSP*
+
+
+
+---
+
+# BLE channels 
+
+<img width="100%" src="img/channels.png" />
+
 
 - Advertisement and Scan PDUs are sent (at least) on **advertising channels** (**37**, **38**, **39**)
 
@@ -333,6 +343,12 @@ $ wble-central -i hci0 scan
 ```
 
 Unlike sniffing, scanning loops on every advertising channel
+
+---
+# GATT services & characteristics
+
+
+![width:450px](img/gatt.png)
 
 ---
 <!-- _class: handson -->
@@ -383,6 +399,14 @@ $ wble-central -i hci0 -b f2:ea:48:d1:48:c9 -r profile my_device.json
 <!-- _class: chapter -->
 
 # Interacting with BLE devices
+
+---
+# Connected mode
+
+- BLE devices can establish a **point to point** connection based on a **Central / Peripheral topology**
+- Connection relies on a **channel frequency algorithm** to prevent interferences with WiFi / other connections (hard to sniff !)
+
+![width:500px](img/connected.png)
 
 ---
 <!-- _class: handson -->
@@ -830,6 +854,48 @@ To run this script:
 
 <!-- _class: chapter -->
 # Breaking BLE legacy pairing
+
+---
+# A few words on sniffing
+**Sniffing advertisements is straightforward** : 
+<pre><code>$ wsniff -i uart0 ble -a</pre></code>
+
+You can select an arbitrary format using `--format`:
+<pre><code>$ wsniff -i uart0 ble -a --format repr</pre></code>
+<pre><code>$ wsniff -i uart0 ble -a --format hexdump</pre></code>
+<pre><code>$ wsniff -i uart0 ble -a --format show</pre></code>
+
+
+---
+# A few words on sniffing
+**Sniffing connections is more difficult** : we need to know the channel hopping parameters
+- A first approach relies on **sniffing connection initiation**:
+  <pre><code>$ wsniff -i uart0 ble -f</pre></code>
+
+- or using Mike Ryan's algorithm to infer parameters: 
+  <pre><code>$ wsniff -i uart0 ble --access-addresses-discovery</pre></code>
+  <pre><code>$ wsniff -i uart0 ble ----access-address 0x11223344</pre></code>
+
+
+---
+# Monitoring sniffed traffic
+
+You can dump it in a PCAP file using `wdump`:
+<pre><code>$ wsniff -i uart0 ble -f | wdump connection.pcap</pre></code>
+
+
+Or observe it in real time using `wshark`:
+<pre><code>$ wsniff -i uart0 ble -f | wshark</pre></code>
+
+---
+# Replaying existing traffic
+
+You can replay very easily an existing capture using `wdump` (all parameters are similar to `wsniff`):
+<pre><code>$ wplay connection.pcap</pre></code>
+
+By default, time is simulated, use ``--flush`` to ignore it:
+<pre><code>$ wplay --flush connection.pcap</pre></code>
+
 
 ---
 
