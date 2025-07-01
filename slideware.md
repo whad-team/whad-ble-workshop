@@ -697,7 +697,7 @@ wble-periph|service(1800)> write 2a00 "EmulatedDevice"
 
 ---
 
-# Check your emulated device's GATT profile
+# Check the device's GATT profile
 
 - Use the `back` command to exit GATT service edition mode
 
@@ -718,7 +718,7 @@ Service 1800 (Generic Access) (handles from 1 to 4):
 
 ---
 
-# Start advertising your emulated device
+# Start advertising
 
 - Use the `start` command to tell `wble-periph` to start advertising:
 
@@ -769,24 +769,50 @@ wble-periph[running]> wireshark on
 
 ---
 
+# Device cloning
+
+Use a saved GATT profile (JSON) with `wble-periph`:
+
+<pre><code>$ wble-periph -i hci0 -p profile.json</code></pre>
+
+It will automatically copy the emulated device profile including:
+- its services, characteristics, descriptors and values
+- its advertising data and scan response (if used)
+
+---
+
 <!-- _class: chapter -->
 # Scripting `wble-periph`
 
 ---
 
-# Real-time monitoring
+# Automate peripheral creation
+
+`emulated.whad`
+
+<pre><code>name "MyEmulatedDevice"
+echo "Configuring services and characteristics ..."
+service 18a00
+char add 2a00 read write notify
+write 2a00 "MyEmulatedDevice"
+back
+echo "Starting emulated device ..."
+start
+wait "Press any key to exit."</code></pre>
+
+To run this script:
+
+<pre><code>$ wble-periph -i hci0 -f emulated.whad</code></pre>
 
 ---
 
-# Dumping traffic to a PCAP
+# Combining cached GATT profile and scripting
 
----
-
-# Use a saved GATT profile
-
----
-
-# 
+<pre><code>echo "Loading cached profile ..."
+profile device-profile.json
+echo "Starting emulated device ..."
+start
+wait "Press any key to exit."</code></pre>
 
 ---
 
