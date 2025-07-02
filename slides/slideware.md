@@ -204,7 +204,7 @@ if device is not None:
 
 
 - Virtual machine image:
-[https://drive.google.com/file/d/10wKAWlcy5zyRrwxYV8BikEAq5SCYjIOP/view?usp=sharing](https://drive.google.com/file/d/10wKAWlcy5zyRrwxYV8BikEAq5SCYjIOP/view?usp=sharing)
+[https://drive.google.com/file/d/1JJK7QjhWLELgWdbSySIyrmI9UX-0Rkj8/view?usp=sharing](https://drive.google.com/file/d/1JJK7QjhWLELgWdbSySIyrmI9UX-0Rkj8/view?usp=sharing)
 
 ---
 
