@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 from whad.ble import Central, Scanner
 from whad.ble.profile import UUID
